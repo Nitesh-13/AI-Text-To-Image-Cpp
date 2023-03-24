@@ -11,22 +11,32 @@ int main() {
     string authToken = "XXXXXXXXXXXXXXXXXXXX"; //Hugging Face Token
     string responseData, query;
 
-    cout<<"Enter a query: ";
+    cout<<"[#] Enter a query: ";
     getline(cin,query);
+    cout<<"[^] Generating image with the help of query provided...\n";
 
     string payload = "{\"inputs\": \""+query+"\"}";
 
+    for(int i = 0;i<query.length();i++)
+    {
+        if(query[i] == ' '){
+            query[i] = '_';
+        }
+    }
+    query += ".jpg";
+    Request req;
+
     if (req.post(apiUrl, payload, responseData, authToken)) {
-        ofstream imageFile("output.jpg", ios::binary);
+        ofstream imageFile(query, ios::binary);
         if (imageFile) {
             imageFile.write(responseData.c_str(), responseData.size());
             imageFile.close();
-            cout << "Image downloaded successfully as output.jpg"<< endl;
+            cout << "[$] Image downloaded successfully as : " <<query<< endl;
         } else {
-            cerr << "Failed to create output image file." << endl;
+            cerr << "[!] Failed to create output image file." << endl;
         }
     } else {
-        cerr << "POST request failed." << endl;
+        cerr << "[!] POST request failed." << endl;
     }
 
     return 0;
